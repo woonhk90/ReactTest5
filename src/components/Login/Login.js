@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, useContext } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import AuthContext from "../../store/auth-context";
 
 /* ------------------------- 최신 state 스냅샷, 디스패치된 액션 ------------------------- */
 const emailReducer = (state, action) => {
@@ -41,6 +42,8 @@ const Login = (props) => {
     value: "",
     isValid: null,
   });
+
+  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     console.log("EFFECT RUNNING");
@@ -98,7 +101,7 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    authCtx.onLogin(emailState.value, passwordState.value);
   };
 
   return (
