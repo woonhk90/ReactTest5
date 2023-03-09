@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useReducer, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useReducer,
+  useContext,
+  useRef,
+} from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -45,6 +51,9 @@ const Login = (props) => {
   });
 
   const authCtx = useContext(AuthContext);
+
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
 
   useEffect(() => {
     console.log("EFFECT RUNNING");
@@ -102,13 +111,27 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    authCtx.onLogin(emailState.value, passwordState.value);
+
+    /*
+      어떤 state를 전달해서
+      그 컴포넌트에서 무언가를 변경하는 방식이 아니라
+      컴포넌트 내부에서 함수를 호출하는 방식
+    */
+    /* ---------------- 자주할 필요도 없지만 자주 해서도 안됨 -> 일반적인 리액트 패턴이 아님 ---------------- */
+    if (formIsValid) {
+      authCtx.onLogin(emailState.value, passwordState.value);
+    } else if (!emailIsValid) {
+      emailInputRef.current.focus();
+    } else {
+      passwordInputRef.current.focus();
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
         <Input
+          ref={emailInputRef}
           type="email"
           id="email"
           label="E-Mail"
@@ -119,6 +142,7 @@ const Login = (props) => {
         />
 
         <Input
+          ref={passwordInputRef}
           type="password"
           id="password"
           label="Password"
@@ -129,7 +153,7 @@ const Login = (props) => {
         />
 
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn}>
             Login
           </Button>
         </div>
